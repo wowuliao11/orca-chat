@@ -2,7 +2,7 @@
   "name": "orca-chat",
   "version": "0.0.1",
   "description": "A Quasar Project with 🐳",
-  "productName": "orca-chat",
+  "productName": "orca-chat-quasar",
   "author": "baozhiming <wowuliao@outlook.com>",
   "private": true,
   "scripts": {
