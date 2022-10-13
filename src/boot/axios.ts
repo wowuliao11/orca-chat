@@ -1,6 +1,6 @@
 import { boot } from 'quasar/wrappers';
 import axios, { AxiosInstance } from 'axios';
-import { Notify } from 'quasar';
+import { LocalStorage, Notify } from 'quasar';
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -27,17 +27,20 @@ export default boot(({ app }) => {
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
 
-  api.interceptors.request.use((value) => {
-    return value;
+  api.interceptors.request.use((reqRef) => {
+    reqRef.headers['Authorization'] =
+      'bearer ' + LocalStorage.getItem('O-TOKEN');
+    return reqRef;
   });
 
   api.interceptors.response.use(
-    (value) => {
+    (value: { data: { code: number; payload: any } }) => {
       const { data } = value;
 
       switch (data.code) {
         case 1:
-          Notify.create({ type: 'negative', message: data.message });
+          Notify.create({ type: 'negative', message: data.payload?.errMsg });
+          break;
       }
 
       return value;
@@ -48,6 +51,8 @@ export default boot(({ app }) => {
 
       switch (status) {
         case 400:
+        case 409:
+        case 403:
           Notify.create({
             type: 'negative',
             message: errMsg,
@@ -57,7 +62,7 @@ export default boot(({ app }) => {
         default:
           Notify.create({
             type: 'warning',
-            message: errMsg,
+            message: 'Server error😭',
           });
           break;
       }

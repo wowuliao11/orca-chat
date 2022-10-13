@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "allowJs": true,
     // `baseUrl` must be placed on the extending configuration in devland, or paths won't be recognized
     "esModuleInterop": true,
@@ -19,15 +20,15 @@
     "jsx": "preserve",
     "lib": ["esnext", "dom"],
     "paths": {
-      "src/*": ["./src/*"],
-      "app/*": ["./*"],
-      "components/*": ["./src/components/*"],
-      "layouts/*": ["./src/layouts/*"],
-      "pages/*": ["./src/pages/*"],
-      "assets/*": ["./src/assets/*"],
-      "boot/*": ["./src/boot/*"],
-      "stores/*": ["./src/stores/*"],
-      "@utils/*": ["./src/utils/*"]
+      "src/*": ["src/*"],
+      "app/*": ["*"],
+      "components/*": ["src/components/*"],
+      "layouts/*": ["src/layouts/*"],
+      "pages/*": ["src/pages/*"],
+      "assets/*": ["src/assets/*"],
+      "boot/*": ["src/boot/*"],
+      "stores/*": ["src/stores/*"],
+      "@utils/*": ["src/utils/*"]
     }
   },
   // Needed to avoid files copied into 'dist' folder (e.g. a `.d.ts` file inside `src-ssr` folder)

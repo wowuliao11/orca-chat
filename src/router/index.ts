@@ -1,3 +1,4 @@
+import { LocalStorage, Notify } from 'quasar';
 import { route } from 'quasar/wrappers';
 import {
   createMemoryHistory,
@@ -7,6 +8,8 @@ import {
 } from 'vue-router';
 
 import routes from './routes';
+import { api } from 'boot/axios';
+import { userInfoStore } from 'stores/user-info-store';
 
 /*
  * If not building with SSR mode, you can
@@ -17,10 +20,14 @@ import routes from './routes';
  * with the Router instance.
  */
 
-export default route(function (/* { store, ssrContext } */) {
+export default route(function ({ store }) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
-    : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory);
+    : process.env.VUE_ROUTER_MODE === 'history'
+    ? createWebHistory
+    : createWebHashHistory;
+
+  const userStore = userInfoStore();
 
   const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
@@ -30,6 +37,30 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
+  });
+
+  Router.beforeEach(async (to: any, from) => {
+    const token = LocalStorage.getItem('O-TOKEN');
+
+    if (!token && to.name !== 'LOGIN') {
+      return { name: 'LOGIN' };
+    }
+
+    console.log(userStore.id);
+    if (token && !userStore.id) {
+      let validFlag = true; // 有效token标识
+      const validateData = await api.get('/auth/validate').catch(() => {
+        userStore.logOut();
+        LocalStorage.clear();
+        Notify.create({ type: 'negative', message: 'Authrazation failed!❌' });
+        validFlag = false;
+      });
+      if (!validateData) return { name: 'LOGIN' };
+      if (!validFlag) return { name: 'LOGIN' };
+      const { username, id, roles } = validateData.data?.payload;
+
+      userStore.updateInfo({ username, id, roles });
+    }
   });
 
   return Router;

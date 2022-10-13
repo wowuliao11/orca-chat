@@ -15,20 +15,18 @@
                 <q-input
                   square
                   filled
-                  clearable
                   v-model="loginForm.loginKey"
                   label="Username || Email"
                   :rules="[
                     (val) =>
                       rules.isEmail(val) ||
                       val.length > 6 ||
-                      'Field must a valid email',
+                      'Field must a valid email or string length more than 6',
                   ]"
                 />
                 <q-input
                   square
                   filled
-                  clearable
                   v-model="loginForm.password"
                   :type="isPwd ? 'password' : 'text'"
                   label="password"
@@ -161,7 +159,7 @@
           </q-input>
         </q-card-section>
         <q-card-section align="center">
-          <q-btn size="lg" type="submit">Sign Up</q-btn>
+          <q-btn size="lg" type="submit"> Sign Up </q-btn>
         </q-card-section>
       </q-form>
     </q-card>
@@ -172,7 +170,10 @@
 import { ref } from 'vue';
 import rules from '@utils/rules';
 import { api } from 'src/boot/axios';
-import { useQuasar } from 'quasar';
+import { LocalStorage, useQuasar } from 'quasar';
+import { userInfoStore } from 'stores/user-info-store';
+
+const userStore = userInfoStore();
 
 const $q = useQuasar();
 
@@ -219,7 +220,6 @@ const onSendMail = async () => {
 };
 
 const onRegist = async () => {
-  console.log('go', registerForm.value);
   await api.post('/user', {
     ...registerForm.value,
   });
@@ -233,7 +233,15 @@ const onEmailChange = async () => {
 };
 
 const onLogin = async () => {
-  await api.post('/auth/login', loginForm.value);
+  const data = await api.post('/auth/login', loginForm.value);
+
+  const { username, id, roles, access_token } = data.data.payload;
+
+  userStore.updateInfo({ username, id, roles });
+  LocalStorage.set('O-TOKEN', access_token); // 存入storage
+
+  window.location.hash = '/';
+
   $q.notify({ type: 'positive', message: 'Success Login!' });
 };
 </script>
