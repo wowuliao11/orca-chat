@@ -43,7 +43,7 @@
           <q-btn round>
             <q-avatar>
               <q-img
-                src="https://cdn.quasar.dev/img/boy-avatar.png"
+                :src="userInfo.avatar || globalConfig.defaultAvatarUrl"
                 alt="auto"
               />
             </q-avatar>
@@ -68,8 +68,10 @@
 import { ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
 import { userInfoStore } from 'stores/user-info-store';
+import { globalConfigStore } from 'stores/global-config-store';
 
 const userInfo = userInfoStore();
+const globalConfig = globalConfigStore();
 
 const essentialLinks = [
   {

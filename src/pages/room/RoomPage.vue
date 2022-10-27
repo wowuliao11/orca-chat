@@ -46,14 +46,11 @@ const river = ref<Array<{ msg: string; user: any; send: boolean }>>([]);
 const message = ref('');
 
 const onSend = async () => {
-  console.log('go');
-  const result = await socket.emit('msgToServer', message.value);
-  console.log(result);
+  await socket.emit('msgToServer', message.value);
 };
 
 onMounted(async () => {
   socket.on('msgToClient', async (msg: string) => {
-    console.log('i got:' + msg);
     river.value.push({ send: false, msg, user: {} });
   });
 });

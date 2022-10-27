@@ -1,17 +1,40 @@
 <template>
   <div :id="galleryID">
-    <a
-      ref="aref"
-      v-for="(image, key) in imagesData"
-      :key="key"
-      :href="image.url"
-      :data-pswp-width="image.width"
-      :data-pswp-height="image.height"
-      target="_blank"
-      rel="noreferrer"
-    >
-      <img :src="image.url.replace(/\/([^\/]*)$/, '/thumb/$1')" alt="" />
-    </a>
+    <q-list separator>
+      <q-item v-for="(image, index) in imagesData" :key="index">
+        <q-item-section>
+          <q-item-label class="full-width ellipsis" caption>
+            {{ image.width }}x{{ image.height }}
+          </q-item-label>
+        </q-item-section>
+
+        <q-item-section v-if="image.url" thumbnail class="gt-xs">
+          <a
+            ref="aref"
+            :key="index"
+            :href="image.url"
+            :data-pswp-width="image.width"
+            :data-pswp-height="image.height"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <img :src="image.url.replace(/\/([^\/]*)$/, '/thumb/$1')" />
+          </a>
+        </q-item-section>
+
+        <q-item-section top side>
+          <q-btn
+            class="gt-xs"
+            size="12px"
+            flat
+            dense
+            round
+            icon="delete"
+            @click="$emit('fileDelete', image.url)"
+          />
+        </q-item-section>
+      </q-item>
+    </q-list>
   </div>
 </template>
 
@@ -23,7 +46,7 @@ import 'photoswipe/style.css';
 
 export default defineComponent({
   name: 'PhotoswipeComponent',
-
+  emits: ['fileDelete'],
   props: {
     galleryID: String,
     images: Array,
@@ -34,22 +57,29 @@ export default defineComponent({
 
   setup(props) {
     const imagesData = ref([]);
-    watch(props.images, (value) => {
-      console.log(value, 'change!');
-
-      for (let i = 0; i < value.length; ++i) {
-        const img = new Image();
-        img.src = value[i];
-        img.onload = () => {
-          console.log(img.width, img.height);
+    const load = () => {
+      {
+        imagesData.value = [];
+        for (let i = 0; i < props.images.length; ++i) {
+          const img = new Image();
+          img.src = props.images[i];
           imagesData.value[i] = {
             url: img.src,
             width: img.width,
             height: img.height,
           };
-        };
+          img.onload = () => {
+            imagesData.value[i] = {
+              url: img.src,
+              width: img.width,
+              height: img.height,
+            };
+          };
+        }
       }
-    });
+    };
+    load();
+    watch(props.images, () => load());
 
     return {
       imagesData,

@@ -237,9 +237,10 @@ const onEmailChange = async () => {
 const onLogin = async () => {
   const data = await api.post('/auth/login', loginForm.value);
 
-  const { username, id, roles, access_token, email } = data.data.payload;
+  const { username, id, roles, access_token, email, avatar } =
+    data.data.payload;
 
-  userStore.updateInfo({ username, id, roles, email });
+  userStore.updateInfo({ username, id, roles, email, avatar });
   LocalStorage.set('O-TOKEN', access_token); // 存入storage
 
   window.location.hash = '/home';

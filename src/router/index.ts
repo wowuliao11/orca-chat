@@ -46,7 +46,6 @@ export default route(function ({}) {
       return { name: 'LOGIN' };
     }
 
-    console.log(userStore.id);
     if (token && !userStore.id) {
       let validFlag = true; // 有效token标识
       const validateData = await api.get('/auth/validate').catch(() => {
@@ -57,9 +56,9 @@ export default route(function ({}) {
       });
       if (!validateData) return { name: 'LOGIN' };
       if (!validFlag) return { name: 'LOGIN' };
-      const { username, id, roles, email } = validateData.data?.payload;
+      const { username, id, roles, email, avatar } = validateData.data?.payload;
 
-      userStore.updateInfo({ username, id, roles, email });
+      userStore.updateInfo({ username, id, roles, email, avatar });
     }
   });
 

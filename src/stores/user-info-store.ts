@@ -6,6 +6,7 @@ export const userInfoStore = defineStore('userInfo', {
     username: '',
     roles: [] as string[],
     email: '',
+    avatar: '',
   }),
   getters: {},
   actions: {
@@ -14,22 +15,26 @@ export const userInfoStore = defineStore('userInfo', {
       username,
       roles,
       email,
+      avatar,
     }: {
       id: string;
       username: string;
       roles: Array<string>;
       email: string;
+      avatar: string;
     }) {
       this.id = id;
       this.username = username;
       this.roles = roles;
       this.email = email;
+      this.avatar = avatar;
     },
     logOut() {
       this.id = '';
       this.username = '';
       this.roles = [];
       this.email = '';
+      this.avatar = '';
     },
   },
 });

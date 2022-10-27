@@ -1,16 +1,22 @@
 <template>
   <div class="q-pa-md" style="max-width: 300px">
-    {{ images }}
     <q-uploader
       :factory="factory"
-      label="Custom list"
+      accept="image/*"
+      :label="props.label || 'Image Uploader🌞'"
       multiple
       auto-upload
       @uploaded="onUploaded"
+      hide-upload-btn
+      :readonly="!!(props.maxFiles && images.length >= props.maxFiles)"
     >
       <template v-slot:list>
         <q-list separator>
-          <PhotoSiwiper galleryID="upload" :images="images" />
+          <PhotoSiwiper
+            galleryID="upload"
+            :images="images"
+            @file-delete="onFileDelete"
+          />
         </q-list>
       </template>
     </q-uploader>
@@ -20,9 +26,15 @@
 <script setup lang="ts">
 import { LocalStorage, QUploaderFactoryObject } from 'quasar';
 import PhotoSiwiper from 'components/PhotoSwiper.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
-const images = ref<(string | undefined)[]>([]);
+const props = defineProps({ images: Array, label: String, maxFiles: Number });
+
+const emit = defineEmits(['update:modelValue']);
+
+const images = ref<any>([...(props.images || [])]);
+
+emit('update:modelValue', props.images);
 
 const factory = () => {
   return new Promise<QUploaderFactoryObject>((resolve) => {
@@ -44,4 +56,14 @@ const onUploaded = async ({ xhr }: { xhr: any }) => {
   const result = JSON.parse(xhr.response);
   images.value.push(result?.payload?.file[0]);
 };
+
+const onFileDelete = async (url: string) => {
+  const eIndex = images.value.findIndex((v: string) => v === url);
+
+  images.value.splice(eIndex, 1);
+};
+
+watch(images.value, (value) => {
+  emit('update:modelValue', value);
+});
 </script>
