@@ -1,77 +1,79 @@
 <template>
-  <q-page
-    class="q-pa-md bg-image window-height window-width row justify-center items-center"
-  >
-    <div class="column col-8">
-      <div class="row justify-center">
-        <h5 class="text-h3 text-black q-my-md">🐳</h5>
-      </div>
+  <q-page-container>
+    <q-page
+      class="q-pa-md bg-image window-height window-width row justify-center items-center"
+    >
+      <div class="column col-8">
+        <div class="row justify-center">
+          <h5 class="text-h3 text-black q-my-md">🐳</h5>
+        </div>
 
-      <div class="row justify-center">
-        <div class="col-7" style="min-width: 300px">
-          <q-card square class="q-pa-lg">
-            <q-form class="q-gutter-md" @submit="onLogin">
-              <q-card-section>
-                <q-input
-                  square
-                  filled
-                  v-model="loginForm.loginKey"
-                  label="Username || Email"
-                  :rules="[
-                    (val) =>
-                      rules.isEmail(val) ||
-                      val.length > 6 ||
-                      'Field must a valid email or string length more than 6',
-                  ]"
-                />
-                <q-input
-                  square
-                  filled
-                  v-model="loginForm.password"
-                  :type="isPwd ? 'password' : 'text'"
-                  label="password"
-                  :rules="[
-                    (val) =>
-                      (val.length >= 6 && val.length <= 16) ||
-                      'Password length should between 6 and 16!',
-                  ]"
-                >
-                  <template v-slot:append>
-                    <q-icon
-                      :name="isPwd ? 'visibility_off' : 'visibility'"
-                      class="cursor-pointer"
-                      @click="isPwd = !isPwd"
-                    />
-                  </template>
-                </q-input>
-              </q-card-section>
-              <q-card-actions class="q-px-md">
-                <q-btn
-                  unelevated
-                  color="light-green-7"
-                  size="lg"
-                  class="full-width"
-                  label="Sign In"
-                  type="submit"
-                />
-              </q-card-actions>
+        <div class="row justify-center">
+          <div class="col-lg-3">
+            <q-card square class="q-pa-lg">
+              <q-form class="q-gutter-md" @submit="onLogin">
+                <q-card-section>
+                  <q-input
+                    square
+                    filled
+                    v-model="loginForm.loginKey"
+                    label="Username || Email"
+                    :rules="[
+                      (val) =>
+                        rules.isEmail(val) ||
+                        val.length > 6 ||
+                        'Field must a valid email or string length more than 6',
+                    ]"
+                  />
+                  <q-input
+                    square
+                    filled
+                    v-model="loginForm.password"
+                    :type="isPwd ? 'password' : 'text'"
+                    label="password"
+                    :rules="[
+                      (val) =>
+                        (val.length >= 6 && val.length <= 16) ||
+                        'Password length should between 6 and 16!',
+                    ]"
+                  >
+                    <template v-slot:append>
+                      <q-icon
+                        :name="isPwd ? 'visibility_off' : 'visibility'"
+                        class="cursor-pointer"
+                        @click="isPwd = !isPwd"
+                      />
+                    </template>
+                  </q-input>
+                </q-card-section>
+                <q-card-actions class="q-px-md">
+                  <q-btn
+                    unelevated
+                    color="light-green-7"
+                    size="lg"
+                    class="full-width"
+                    label="Sign In"
+                    type="submit"
+                  />
+                </q-card-actions>
 
-              <q-card-section class="q-px-md">
-                <q-btn
-                  label="Sign Up"
-                  color="primary"
-                  class="full-width"
-                  size="lg"
-                  @click="card = true"
-                />
-              </q-card-section>
-            </q-form>
-          </q-card>
+                <q-card-section class="q-px-md">
+                  <q-btn
+                    label="Sign Up"
+                    color="primary"
+                    class="full-width"
+                    size="lg"
+                    @click="card = true"
+                  />
+                </q-card-section>
+              </q-form>
+            </q-card>
+          </div>
         </div>
       </div>
-    </div>
-  </q-page>
-  <q-dialog v-model="card">
+    </q-page>
+  </q-page-container>
+  <q-dialog v-model="card" persistent>
     <q-card>
       <q-form @submit="onRegist">
         <q-card-section class="row items-center q-pb-none">
@@ -235,12 +237,12 @@ const onEmailChange = async () => {
 const onLogin = async () => {
   const data = await api.post('/auth/login', loginForm.value);
 
-  const { username, id, roles, access_token } = data.data.payload;
+  const { username, id, roles, access_token, email } = data.data.payload;
 
-  userStore.updateInfo({ username, id, roles });
+  userStore.updateInfo({ username, id, roles, email });
   LocalStorage.set('O-TOKEN', access_token); // 存入storage
 
-  window.location.hash = '/';
+  window.location.hash = '/home';
 
   $q.notify({ type: 'positive', message: 'Success Login!' });
 };

@@ -17,16 +17,45 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+    <q-drawer v-model="leftDrawerOpen" show-if-above :breakpoint="400">
+      <q-scroll-area
+        :style="` height: calc(100% - 150px);
+          margin-top: 150px;
+          border-right: 1px solid #ddd;`"
+      >
+        <q-list padding>
+          <EssentialLink
+            v-for="link in essentialLinks"
+            :key="link.title"
+            v-bind="link"
+          />
+        </q-list>
+      </q-scroll-area>
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
+      <q-img
+        class="absolute-top cursor-pointer"
+        v-ripple
+        src="https://cdn.quasar.dev/img/material.png"
+        style="height: 150px"
+        @click="$router.replace({ path: '/editUser' })"
+      >
+        <div class="absolute-bottom bg-transparent">
+          <q-btn round>
+            <q-avatar>
+              <q-img
+                src="https://cdn.quasar.dev/img/boy-avatar.png"
+                alt="auto"
+              />
+            </q-avatar>
+          </q-btn>
+          <div class="text-weight-bold">
+            {{ userInfo.username }}
+          </div>
+          <div>
+            {{ userInfo.email }}
+          </div>
+        </div>
+      </q-img>
     </q-drawer>
 
     <q-page-container>
@@ -35,36 +64,24 @@
   </q-layout>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
+import { userInfoStore } from 'stores/user-info-store';
 
-const linksList = [
+const userInfo = userInfoStore();
+
+const essentialLinks = [
   {
     title: '🐳',
     caption: 'room',
     icon: 'school',
-    link: 'room',
+    link: '/room',
   },
 ];
+const leftDrawerOpen = ref(false);
 
-export default defineComponent({
-  name: 'MainLayout',
-
-  components: {
-    EssentialLink,
-  },
-
-  setup() {
-    const leftDrawerOpen = ref(false);
-
-    return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
-    };
-  },
-});
+const toggleLeftDrawer = () => {
+  leftDrawerOpen.value = !leftDrawerOpen.value;
+};
 </script>
