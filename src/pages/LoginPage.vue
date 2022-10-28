@@ -160,6 +160,19 @@
             </template>
           </q-input>
         </q-card-section>
+
+        <q-card-section>
+          <q-input
+            standout="bg-teal text-white"
+            v-model="registerForm.nick"
+            label="Nickname"
+            :rules="[
+              (val) =>
+                (val.length >= 3 && val.length <= 16) ||
+                'Nickname length should between 3 and 16!',
+            ]"
+          />
+        </q-card-section>
         <q-card-section align="center">
           <q-btn size="lg" type="submit"> Sign Up </q-btn>
         </q-card-section>
@@ -186,11 +199,13 @@ const registerForm = ref<{
   password: string;
   email: string;
   verificationCode: string;
+  nick: string;
 }>({
   username: '',
   password: '',
   email: '',
   verificationCode: '',
+  nick: '',
 });
 
 const loginForm = ref<{ loginKey: string; password: string }>({
@@ -237,10 +252,10 @@ const onEmailChange = async () => {
 const onLogin = async () => {
   const data = await api.post('/auth/login', loginForm.value);
 
-  const { username, id, roles, access_token, email, avatar } =
+  const { username, id, roles, access_token, email, avatar, nick } =
     data.data.payload;
 
-  userStore.updateInfo({ username, id, roles, email, avatar });
+  userStore.updateInfo({ username, id, roles, email, avatar, nick });
   LocalStorage.set('O-TOKEN', access_token); // 存入storage
 
   window.location.hash = '/home';

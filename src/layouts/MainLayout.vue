@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
+      <q-toolbar class="q-gutter-lg">
         <q-btn
           flat
           dense
@@ -11,9 +11,12 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
+        <q-toolbar-title> 🐳 💬</q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>I use Quasar v{{ $q.version }} 👍</div>
+        <q-separator dark vertical />
+
+        <q-btn icon="las la-door-open" stretch flat @click="logout" />
       </q-toolbar>
     </q-header>
 
@@ -49,7 +52,7 @@
             </q-avatar>
           </q-btn>
           <div class="text-weight-bold">
-            {{ userInfo.username }}
+            {{ userInfo.nick }}
           </div>
           <div>
             {{ userInfo.email }}
@@ -69,6 +72,9 @@ import { ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
 import { userInfoStore } from 'stores/user-info-store';
 import { globalConfigStore } from 'stores/global-config-store';
+import { LocalStorage, useQuasar } from 'quasar';
+
+const $q = useQuasar();
 
 const userInfo = userInfoStore();
 const globalConfig = globalConfigStore();
@@ -85,5 +91,12 @@ const leftDrawerOpen = ref(false);
 
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
+};
+
+const logout = () => {
+  userInfo.logOut();
+  LocalStorage.clear();
+  window.location.hash = '/login';
+  $q.notify({ type: 'positive', message: 'See you soon!' });
 };
 </script>

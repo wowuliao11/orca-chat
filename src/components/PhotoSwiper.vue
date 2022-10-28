@@ -8,18 +8,26 @@
           </q-item-label>
         </q-item-section>
 
-        <q-item-section v-if="image.url" thumbnail class="gt-xs">
+        <q-item-section v-if="image.width && image.height">
           <a
             ref="aref"
             :key="index"
             :href="image.url"
             :data-pswp-width="image.width"
             :data-pswp-height="image.height"
+            data-pswp-tile-type="deepzoom"
             target="_blank"
             rel="noreferrer"
           >
-            <img :src="image.url.replace(/\/([^\/]*)$/, '/thumb/$1')" />
+            <img
+              :src="image.url.replace(/\/([^\/]*)$/, '/thumb/$1')"
+              style="width: 40px; height: 40px"
+            />
           </a>
+        </q-item-section>
+
+        <q-item-section v-else>
+          <q-spinner color="primary" size="2em" :thickness="2" />
         </q-item-section>
 
         <q-item-section top side>
@@ -42,6 +50,7 @@
 import { defineComponent, watch, ref } from 'vue';
 
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
+
 import 'photoswipe/style.css';
 
 export default defineComponent({
@@ -90,11 +99,13 @@ export default defineComponent({
       this.lightbox = new PhotoSwipeLightbox({
         gallery: '#' + this.$props.galleryID,
         children: 'a',
-        maxWidthToAnimate: 800,
-        showHideAnimationType: 'fade',
+        showHideAnimationType: 'zoom',
         pswpModule: () => import('photoswipe'),
+        initialZoomLevel: 'fill',
+        secondaryZoomLevel: 'fit',
+        wheelToZoom: true,
+        zoom: false,
       });
-
       this.lightbox.init();
     }
   },

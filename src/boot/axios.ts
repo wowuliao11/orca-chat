@@ -48,7 +48,6 @@ export default boot(({ app }) => {
     (error) => {
       const { status, data } = error.response || {};
       const { errMsg } = data?.payload || {};
-
       switch (status) {
         case 400:
         case 409:

@@ -56,9 +56,10 @@ export default route(function ({}) {
       });
       if (!validateData) return { name: 'LOGIN' };
       if (!validFlag) return { name: 'LOGIN' };
-      const { username, id, roles, email, avatar } = validateData.data?.payload;
+      const { username, id, roles, email, avatar, nick } =
+        validateData.data?.payload;
 
-      userStore.updateInfo({ username, id, roles, email, avatar });
+      userStore.updateInfo({ username, id, roles, email, avatar, nick });
     }
   });
 
