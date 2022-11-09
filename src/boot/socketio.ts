@@ -1,7 +1,10 @@
+import { LocalStorage } from 'quasar';
 import { boot } from 'quasar/wrappers';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:4444');
+const socket = io('http://localhost:4444', {
+  extraHeaders: { Authorization: 'Bearer ' + LocalStorage.getItem('O-TOKEN')! },
+});
 
 export default boot(async (/* { app, router, ... } */) => {
   // client-side

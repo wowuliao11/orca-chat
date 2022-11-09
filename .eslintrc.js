@@ -87,5 +87,8 @@ module.exports = {
 
     // liberation for my dear ANY
     '@typescript-eslint/no-explicit-any': 'off',
+
+    // non-null allo!
+    '@typescript-eslint/no-non-null-assertion': 'off',
   },
 };

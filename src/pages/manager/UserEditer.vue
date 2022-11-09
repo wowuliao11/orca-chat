@@ -74,7 +74,7 @@ const onSubmit = async () => {
   });
 
   result.data.payload;
-  userInfo.updateInfo(result.data.payload);
+  userInfo.updateInfo({ ...result.data.payload, id: result.data.payload?._id });
 
   $q.notify({ type: 'positive', message: 'Modify successfully!' });
 };

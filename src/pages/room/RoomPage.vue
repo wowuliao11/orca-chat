@@ -17,14 +17,16 @@
 
     <q-card-section>
       <!-- chat content -->
+
       <q-chat-message
         v-for="(r, index) in river"
         :key="index"
         :name="r.user?.name || 'unknowName'"
-        :avatar="`https://cdn.quasar.dev/img/avatar${(index % 2) + 1}.jpg`"
-        :text="[r.msg]"
+        :avatar="r.user.avatar"
         :sent="r.send"
-      />
+        :text="r.msg"
+      >
+      </q-chat-message>
     </q-card-section>
 
     <q-card-section>
@@ -40,18 +42,58 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { socket } from 'boot/socketio';
+import { userInfoStore } from 'stores/user-info-store';
 
-const river = ref<Array<{ msg: string; user: any; send: boolean }>>([]);
+const river = ref<
+  Array<{ msg: string[]; user: any; send: boolean; failure: boolean }>
+>([]);
+
+const userInfo = userInfoStore();
 
 const message = ref('');
 
 const onSend = async () => {
-  await socket.emit('msgToServer', message.value);
+  const tmpMsg = message.value;
+
+  socket.emit('msgToServer', { message: tmpMsg }, (val: any) => {
+    console.log(val);
+    const lastElement = river.value[river.value.length - 1];
+
+    if (lastElement && lastElement.user?.id === userInfo.id)
+      lastElement.msg?.push(tmpMsg);
+    else
+      river.value.push({
+        send: true,
+        msg: [val.message],
+        user: {
+          id: userInfo.id,
+          name: userInfo.username,
+          avatar: userInfo.avatar,
+        },
+        failure: false,
+      });
+    message.value = '';
+  });
 };
 
 onMounted(async () => {
-  socket.on('msgToClient', async (msg: string) => {
-    river.value.push({ send: false, msg, user: {} });
+  socket.on('msgToClient', async (data: any) => {
+    if (userInfo.id !== data.user?._id) {
+      const lastElement = river.value[river.value.length - 1];
+      if (lastElement && lastElement.user?.id === data.user?._id)
+        lastElement.msg?.push(data.message);
+      else
+        river.value.push({
+          send: false,
+          msg: [data.message],
+          user: {
+            id: data.user?._id,
+            name: data.user?.username,
+            avatar: data.user?.avatar,
+          },
+          failure: false,
+        });
+    }
   });
 });
 </script>
