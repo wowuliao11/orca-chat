@@ -1,34 +1,53 @@
 <template>
-  <div class="row q-col-gutter-md">
-    <div
-      :id="galleryID"
-      v-for="(image, index) in imagesData"
-      :key="index"
-      class="col-4"
-    >
-      <a
-        ref="aref"
-        :key="index"
-        :href="image.url"
-        :data-pswp-width="image.width"
-        :data-pswp-height="image.height"
-        data-pswp-tile-type="deepzoom"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <q-img
-          :src="
-            isThumb ? image.url.replace(/\/([^\/]*)$/, '/thumb/$1') : image.url
-          "
-          style="max-width: 200px; max-height: 200px"
-        />
-      </a>
-    </div>
+  <div :id="galleryID">
+    <q-list separator>
+      <q-item v-for="(image, index) in imagesData" :key="index">
+        <q-item-section>
+          <q-item-label class="full-width ellipsis" caption>
+            {{ image.width }}x{{ image.height }}
+          </q-item-label>
+        </q-item-section>
+
+        <q-item-section v-if="image.width && image.height">
+          <a
+            ref="aref"
+            :key="index"
+            :href="image.url"
+            :data-pswp-width="image.width"
+            :data-pswp-height="image.height"
+            data-pswp-tile-type="deepzoom"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <img
+              :src="image.url.replace(/\/([^\/]*)$/, '/thumb/$1')"
+              style="width: 40px; height: 40px"
+            />
+          </a>
+        </q-item-section>
+
+        <q-item-section v-else>
+          <q-spinner color="primary" size="2em" :thickness="2" />
+        </q-item-section>
+
+        <q-item-section top side>
+          <q-btn
+            class="gt-xs"
+            size="12px"
+            flat
+            dense
+            round
+            icon="delete"
+            @click="$emit('fileDelete', image.url)"
+          />
+        </q-item-section>
+      </q-item>
+    </q-list>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { defineComponent, watch, ref } from 'vue';
 
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
 
@@ -40,16 +59,13 @@ export default defineComponent({
   props: {
     galleryID: String,
     images: Array,
-    thumb: Boolean,
   },
   data: function () {
     return { aref: [] };
   },
+
   setup(props) {
     const imagesData = ref([]);
-
-    const isThumb = ref(props.thumb);
-
     const load = () => {
       {
         imagesData.value = [];
@@ -71,12 +87,11 @@ export default defineComponent({
         }
       }
     };
-
     load();
+    watch(props.images, () => load());
 
     return {
       imagesData,
-      isThumb,
     };
   },
   mounted() {

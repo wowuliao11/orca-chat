@@ -26,7 +26,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/IndexPage.vue'),
         alias: ['/', '/home'],
       },
-      { path: 'room', component: () => import('pages/room/RoomPage.vue') },
+      { path: 'hall', component: () => import('pages/chat/HallPage.vue') },
+      {
+        path: 'room/:roomId',
+        component: () => import('pages/chat/RoomPage.vue'),
+      },
       {
         path: '/editUser',
         component: () => import('pages/manager/UserEditer.vue'),

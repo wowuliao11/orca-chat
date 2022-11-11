@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { LocalStorage, QUploaderFactoryObject } from 'quasar';
-import PhotoSiwiper from 'components/PhotoSwiper.vue';
+import PhotoSiwiper from 'src/components/UploaderPhotoSwiper.vue';
 import { ref, watch } from 'vue';
 
 const props = defineProps({ images: Array, label: String, maxFiles: Number });

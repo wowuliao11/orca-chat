@@ -80,6 +80,7 @@ onMounted(async () => {
   socket.on('msgToClient', async (data: any) => {
     if (userInfo.id !== data.user?._id) {
       const lastElement = river.value[river.value.length - 1];
+
       if (lastElement && lastElement.user?.id === data.user?._id)
         lastElement.msg?.push(data.message);
       else
