@@ -31,12 +31,28 @@
               <div>{{ props.row.describe }}</div>
             </q-card-section>
 
-            <q-card-section>
+            <q-card-section class="q-gutter-md">
               <q-btn
                 color="primary"
                 icon="las la-users"
                 label="Let's talk!"
-                :to="'/room/' + props.row._id"
+                :to="'/room/' + props.row.title"
+                v-if="props.row.memberUserIds?.some((m:any)=>m === userInfo.id)"
+              />
+
+              <q-btn
+                color="primary"
+                icon="las la-running"
+                label="Leave"
+                @click="onLeave(props.row.title)"
+                v-if="props.row.memberUserIds?.some((m:any)=>m === userInfo.id)"
+              />
+              <q-btn
+                color="primary"
+                icon="group_add"
+                label="JOIN"
+                v-else
+                @click="onJoin(props.row.title)"
               />
             </q-card-section>
           </q-card>
@@ -47,10 +63,15 @@
 </template>
 
 <script setup lang="ts">
-import { QTableProps } from 'quasar';
+import { QTableProps, useQuasar } from 'quasar';
 import { api } from 'src/boot/axios';
 import { ref } from 'vue';
+import { userInfoStore } from 'stores/user-info-store';
 import PhotoSwiper from 'components/PhotoSwiper.vue';
+
+const $q = useQuasar();
+
+const userInfo = userInfoStore();
 
 const rows = ref([]);
 
@@ -77,13 +98,40 @@ const load = async () => {
   const result = await api.get('/room', {
     params: { pageIndex: page, pageSize: rowsPerPage },
   });
-  rows.value = result.data.payload?.data;
+  const { count, data } = result.data.payload;
+  console.log(
+    data.reduce(
+      (prev: any, cur: any) => [
+        ...prev,
+        ...cur.members?.map((m: any) => m?._id),
+      ],
+      []
+    )
+  );
+  for (const d of data) {
+    d.memberUserIds = d.members.map((m: any) => m?.user?._id);
+  }
+  data.memberUserIds = data.reduce(
+    (prev: any, cur: any) => [...prev, ...cur.members?.map((m: any) => m?._id)],
+    []
+  );
+  rows.value = data;
   pagination.value = {
     ...pagination.value,
-    rowsNumber: result.data.payload?.count,
+    rowsNumber: count,
   };
+};
 
-  console.log(result);
+const onLeave = async (roomTitle: string) => {
+  await api.patch('/room/leaveRoom', { roomTitle });
+  $q.notify({ type: 'positive', message: 'Success leave!' });
+  load();
+};
+
+const onJoin = async (roomTitle: string) => {
+  await api.patch('/room/joinRoom', { roomTitle });
+  $q.notify({ type: 'positive', message: 'Success join!' });
+  load();
 };
 
 load();

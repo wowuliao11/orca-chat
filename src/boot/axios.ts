@@ -52,6 +52,7 @@ export default boot(({ app }) => {
         case 400:
         case 409:
         case 403:
+        case 404:
           Notify.create({
             type: 'negative',
             message: errMsg,
