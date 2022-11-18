@@ -254,8 +254,16 @@ const onLogin = async () => {
 
   const { username, id, roles, access_token, email, avatar, nick } =
     data.data.payload;
-  console.log({ username, id, roles, email, avatar, nick });
-  userStore.updateInfo({ username, id, roles, email, avatar, nick });
+
+  userStore.updateInfo({
+    username,
+    id,
+    roles,
+    email,
+    avatar,
+    nick,
+    token: access_token,
+  });
   LocalStorage.set('O-TOKEN', access_token); // 存入storage
 
   window.location.hash = '/home';

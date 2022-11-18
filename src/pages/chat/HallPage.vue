@@ -99,15 +99,7 @@ const load = async () => {
     params: { pageIndex: page, pageSize: rowsPerPage },
   });
   const { count, data } = result.data.payload;
-  console.log(
-    data.reduce(
-      (prev: any, cur: any) => [
-        ...prev,
-        ...cur.members?.map((m: any) => m?._id),
-      ],
-      []
-    )
-  );
+
   for (const d of data) {
     d.memberUserIds = d.members.map((m: any) => m?.user?._id);
   }
