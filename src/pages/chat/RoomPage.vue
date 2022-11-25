@@ -1,54 +1,51 @@
 <template>
-  <div class="q-pa-md justify-center items-center row">
-    <div class="col-lg-7 justify-center">
-      <q-card flat bordered v-if="userRoomPermission">
-        <q-item>
-          <q-item-section avatar>
-            <q-avatar v-if="roomRef.avatar">
-              <img :src="roomRef.avatar" />
-            </q-avatar>
-          </q-item-section>
+  <q-page padding class="q-pa-md justify-center full-height">
+    <q-card flat bordered v-if="userRoomPermission">
+      <q-item>
+        <q-item-section avatar>
+          <q-avatar v-if="roomRef.avatar">
+            <img :src="roomRef.avatar" />
+          </q-avatar>
+        </q-item-section>
 
-          <q-item-section>
-            <q-item-label>{{ roomRef.title }}</q-item-label>
-            <q-item-label caption> {{ roomRef.describe }} </q-item-label>
-          </q-item-section>
-        </q-item>
+        <q-item-section>
+          <q-item-label>{{ roomRef.title }}</q-item-label>
+          <q-item-label caption> {{ roomRef.describe }} </q-item-label>
+        </q-item-section>
+      </q-item>
 
-        <q-separator />
+      <q-separator />
 
-        <q-card-section>
-          <!-- chat content -->
+      <q-card-section class="scroll" style="height: 70vh" ref="riverRef">
+        <!-- chat content -->
+        <q-chat-message
+          v-for="(r, index) in river"
+          :key="index"
+          :name="r.user?.name || 'unknowName'"
+          :avatar="r.user.avatar"
+          :sent="r.send"
+          :text="r.msg"
+          bg-color="primary"
+          text-color="white"
+          :stamp="r.time"
+        >
+        </q-chat-message>
+      </q-card-section>
 
-          <q-chat-message
-            v-for="(r, index) in river"
-            :key="index"
-            :name="r.user?.name || 'unknowName'"
-            :avatar="r.user.avatar"
-            :sent="r.send"
-            :text="r.msg"
-            bg-color="primary"
-            text-color="white"
-            :stamp="r.time"
-          >
-          </q-chat-message>
-        </q-card-section>
-
-        <q-card-section>
-          <q-input
-            v-model="message"
-            label="I WANT TO SAY!!"
-            @keydown.enter.prevent="onSend"
-          />
-        </q-card-section>
-      </q-card>
-      <q-card class="my-card" flat bordered v-else>
-        <q-card-section>
-          You have no permission into the room or not found this room!
-        </q-card-section>
-      </q-card>
-    </div>
-  </div>
+      <q-card-section>
+        <q-input
+          v-model="message"
+          label="I WANT TO SAY!!"
+          @keydown.enter.prevent="onSend"
+        />
+      </q-card-section>
+    </q-card>
+    <q-card class="" flat bordered v-else>
+      <q-card-section>
+        You have no permission into the room or not found this room!
+      </q-card-section>
+    </q-card>
+  </q-page>
 </template>
 
 <script setup lang="ts">
@@ -58,11 +55,16 @@ import { socket } from 'boot/socketio';
 import { userInfoStore } from 'stores/user-info-store';
 import { api } from 'src/boot/axios';
 import { date, useQuasar } from 'quasar';
+import { scroll } from 'quasar';
 
 const MSG_TO_CLINET = 'MSG_TO_CLINET';
 const MSG_TO_SERVER = 'MSG_TO_SERVER';
 const ERROR_FLAG = 'ERROR';
 const JOIN_FLAG = 'JOIN';
+
+const { getVerticalScrollPosition, setVerticalScrollPosition } = scroll;
+
+const riverRef = ref();
 
 const $q = useQuasar();
 
@@ -186,6 +188,9 @@ const onSend = async () => {
           failure: false,
         });
       message.value = '';
+      const scrollEl = riverRef.value.$el;
+
+      setVerticalScrollPosition(scrollEl, scrollEl.scrollHeight, 1500);
     }
   );
 };
