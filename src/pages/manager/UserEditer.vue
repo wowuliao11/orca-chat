@@ -1,6 +1,6 @@
 <template>
   <q-page class="main-bg row items-center justify-evenly">
-    <q-list bordered class="rounded-borders col-5" style="max-width: 1000px">
+    <q-list bordered class="rounded-borders col-12" style="max-width: 1000px">
       <q-item-label header>Edit profile</q-item-label>
 
       <q-separator spaced />

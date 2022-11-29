@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md" style="max-width: 300px">
+  <div class="q-pa-md">
     <q-uploader
       :factory="factory"
       accept="image/*"

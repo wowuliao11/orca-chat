@@ -32,7 +32,6 @@
 
         <q-item-section top side>
           <q-btn
-            class="gt-xs"
             size="12px"
             flat
             dense
