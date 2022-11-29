@@ -38,7 +38,7 @@
       <q-img
         class="absolute-top cursor-pointer"
         v-ripple
-        src="https://cdn.quasar.dev/img/material.png"
+        src="~assets/edbg.jpeg"
         style="height: 150px"
         @click="$router.replace({ path: '/editUser' })"
       >
