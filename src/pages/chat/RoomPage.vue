@@ -16,20 +16,30 @@
 
       <q-separator />
 
-      <q-card-section class="scroll" style="height: 70vh" ref="riverRef">
-        <!-- chat content -->
-        <q-chat-message
-          v-for="(r, index) in river"
-          :key="index"
-          :name="r.user?.name || 'unknowName'"
-          :avatar="r.user.avatar"
-          :sent="r.send"
-          :text="r.msg"
-          bg-color="primary"
-          text-color="white"
-          :stamp="r.time"
-        >
-        </q-chat-message>
+      <q-card-section class="scroll column" style="height: 70vh" ref="riverRef">
+        <q-pull-to-refresh @refresh="onScroll">
+          <div
+            class="col-2 text-center bg-blue-grey-2 text-white"
+            @click="onScroll"
+          >
+            Pull or click to view more histories.🔍
+          </div>
+
+          <div class="col-8">
+            <!-- chat content -->
+            <q-chat-message
+              v-for="(r, index) in river"
+              :key="index"
+              :name="r.user?.name || 'unknowName'"
+              :avatar="r.user.avatar"
+              :sent="r.send"
+              :text="r.msg"
+              bg-color="primary"
+              text-color="white"
+              :stamp="r.time"
+            />
+          </div>
+        </q-pull-to-refresh>
       </q-card-section>
 
       <q-card-section>
@@ -62,7 +72,7 @@ const MSG_TO_SERVER = 'MSG_TO_SERVER';
 const ERROR_FLAG = 'ERROR';
 const JOIN_FLAG = 'JOIN';
 
-const { getVerticalScrollPosition, setVerticalScrollPosition } = scroll;
+const { setVerticalScrollPosition } = scroll;
 
 const riverRef = ref();
 
@@ -72,6 +82,8 @@ const route = useRoute();
 const { roomId: roomKey } = route.params;
 
 const userRoomPermission = ref(false);
+
+const historiesPageIndex = ref(1);
 
 const river = ref<
   Array<{
@@ -94,6 +106,51 @@ const roomRef = ref({
 
 const message = ref('');
 
+// Initialize chatting history
+const initializeHistories = async (pageIndex: number) => {
+  const {
+    data: { payload: histories },
+  } = await api.get('/history/room', {
+    params: { roomId: roomRef.value.id, pageIndex },
+  });
+  for (const history of histories) {
+    if (userInfo.id !== history.from?._id) {
+      const lastElement = river.value[0];
+
+      if (lastElement && lastElement.user?.id === history.from?._id)
+        lastElement.msg?.unshift(history.content);
+      else
+        river.value.unshift({
+          send: false,
+          msg: [history.content],
+          user: {
+            id: history.from?._id,
+            name: history.from?.username,
+            avatar: history.from?.avatar,
+          },
+          time: date.formatDate(history.createdAt, 'YYYY-MM-DD HH:mm:ss'),
+          failure: false,
+        });
+    } else {
+      const lastElement = river.value[0];
+
+      if (lastElement && lastElement.user?.id === history.from?._id)
+        lastElement.msg?.unshift(history.content);
+      else
+        river.value.unshift({
+          send: true,
+          msg: [history.content],
+          user: {
+            id: history.from?._id,
+            name: history.from?.username,
+            avatar: history.from?.avatar,
+          },
+          time: date.formatDate(history.createdAt, 'YYYY-MM-DD HH:mm:ss'),
+          failure: false,
+        });
+    }
+  }
+};
 const load = async () => {
   // Check user role into the room
   const result = await api.get('/room/checkIsUserInRoom', {
@@ -109,57 +166,16 @@ const load = async () => {
     params: { key: roomKey },
   });
 
-  // Initialize chatting history
-  const {
-    data: { payload: histories },
-  } = await api.get('/history/room', { params: { roomId: room._id } });
-  for (const history of histories) {
-    if (userInfo.id !== history.from?._id) {
-      const lastElement = river.value[river.value.length - 1];
-
-      if (lastElement && lastElement.user?.id === history.from?._id)
-        lastElement.msg?.push(history.content);
-      else
-        river.value.push({
-          send: false,
-          msg: [history.content],
-          user: {
-            id: history.from?._id,
-            name: history.from?.username,
-            avatar: history.from?.avatar,
-          },
-          time: date.formatDate(history.createdAt, 'YYYY-MM-DD HH:mm:ss'),
-          failure: false,
-        });
-    } else {
-      const lastElement = river.value[river.value.length - 1];
-
-      if (lastElement && lastElement.user?.id === history.from?._id)
-        lastElement.msg?.push(history.content);
-      else
-        river.value.push({
-          send: true,
-          msg: [history.content],
-          user: {
-            id: history.from?._id,
-            name: history.from?.username,
-            avatar: history.from?.avatar,
-          },
-          time: date.formatDate(history.createdAt, 'YYYY-MM-DD HH:mm:ss'),
-          failure: false,
-        });
-    }
-  }
-
-  socket.emit(JOIN_FLAG, { roomId: room._id });
-
   roomRef.value = {
     avatar: room.avatar,
     title: room.title,
     describe: room.describe,
     id: room._id,
   };
+  initializeHistories(historiesPageIndex.value);
+  socket.emit(JOIN_FLAG, { roomId: room._id });
 };
+
 /***
  * Send message to server
  */
@@ -194,6 +210,15 @@ const onSend = async () => {
     }
   );
 };
+
+/**
+ * Scroll event
+ */
+const onScroll = (async (done?: () => void) => {
+  await initializeHistories(historiesPageIndex.value + 1);
+  historiesPageIndex.value += 1;
+  if (typeof done === 'function') done();
+}) as any;
 
 socket.on(MSG_TO_CLINET, async (data: any) => {
   console.log(userInfo.id, data.user?._id);
