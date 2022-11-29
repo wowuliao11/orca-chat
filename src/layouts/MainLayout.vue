@@ -86,12 +86,6 @@ const essentialLinks = [
     icon: 'cloud',
     link: '/hall',
   },
-  {
-    title: 'demo',
-    caption: 'room',
-    icon: 'school',
-    link: '/room',
-  },
 ];
 const leftDrawerOpen = ref(false);
 
