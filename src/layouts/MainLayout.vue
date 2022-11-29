@@ -81,9 +81,9 @@ const globalConfig = globalConfigStore();
 
 const essentialLinks = [
   {
-    title: 'chat room',
-    caption: 'a room for chat',
-    icon: 'cloud',
+    title: 'Chat room🏠',
+    caption: 'Some room for chat',
+    icon: 'forum',
     link: '/hall',
   },
 ];
