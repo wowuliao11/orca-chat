@@ -125,7 +125,7 @@ const initializeHistories = async (pageIndex: number) => {
           msg: [history.content],
           user: {
             id: history.from?._id,
-            name: history.from?.username,
+            name: history.from?.nick,
             avatar: history.from?.avatar,
           },
           time: date.formatDate(history.createdAt, 'YYYY-MM-DD HH:mm:ss'),
@@ -142,7 +142,7 @@ const initializeHistories = async (pageIndex: number) => {
           msg: [history.content],
           user: {
             id: history.from?._id,
-            name: history.from?.username,
+            name: history.from?.nick,
             avatar: history.from?.avatar,
           },
           time: date.formatDate(history.createdAt, 'YYYY-MM-DD HH:mm:ss'),
@@ -233,7 +233,7 @@ socket.on(MSG_TO_CLINET, async (data: any) => {
         msg: [data.message],
         user: {
           id: data.user?._id,
-          name: data.user?.username,
+          name: data.user?.nick,
           avatar: data.user?.avatar,
         },
         time: date.formatDate(data.time, 'YYYY-MM-DD HH:mm:ss'),
