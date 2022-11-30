@@ -1,6 +1,11 @@
 <template>
   <div class="row q-col-gutter-md">
-    <div :id="galleryID" v-for="(image, index) in imagesData" :key="index">
+    <div
+      :id="galleryID"
+      v-for="(image, index) in imagesData"
+      :key="index"
+      class="col-4"
+    >
       <a
         ref="aref"
         :key="index"
