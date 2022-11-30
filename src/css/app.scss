@@ -4,3 +4,29 @@
 //   background: url('../assets/snow.jpeg') no-repeat;
 //   background-size: cover;
 // }
+@font-face {
+  font-family: harmonyFontSansMedium;
+  src: url(./fonts/HarmonyOS_Sans_Condensed_Medium.ttf);
+}
+
+@font-face {
+  font-family: harmonyFontSansBold;
+  src: url(./fonts/HarmonyOS_Sans_Condensed_Bold.ttf);
+}
+
+@font-face {
+  font-family: harmonyFontSansLight;
+  src: url(./fonts/HarmonyOS_Sans_Condensed_Light.ttf);
+}
+
+.harmony-font-sans-medium {
+  font-family: 'harmonyFontSansMedium';
+}
+
+.harmony-font-sans-bold {
+  font-family: 'harmonyFontSansBold';
+}
+
+.harmony-font-sans-light {
+  font-family: 'harmonyFontSansLight';
+}

@@ -21,14 +21,16 @@
             <!-- Title -->
             <q-card-section>
               <strong>Title</strong>
-              <div>{{ props.row.title }}</div>
+              <div class="harmony-font-sans-light">{{ props.row.title }}</div>
             </q-card-section>
 
             <q-separator />
             <!-- Describe -->
             <q-card-section>
               <strong>Describe</strong>
-              <div>{{ props.row.describe }}</div>
+              <div class="harmony-font-sans-light">
+                {{ props.row.describe }}
+              </div>
             </q-card-section>
 
             <q-card-section class="q-gutter-md">

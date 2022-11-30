@@ -10,6 +10,14 @@
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
+        <q-btn
+          flat
+          dense
+          round
+          icon="home"
+          aria-label="Menu"
+          @click="toggleLeftDrawer"
+        />
 
         <q-toolbar-title> 🐳 💬</q-toolbar-title>
 
@@ -51,10 +59,10 @@
               />
             </q-avatar>
           </q-btn>
-          <div class="text-weight-bold">
+          <div class="text-weight-bolder text-h6 harmony-font-sans-medium">
             {{ userInfo.nick }}
           </div>
-          <div>
+          <div class="text-subtitle1 harmony-font-sans-medium">
             {{ userInfo.email }}
           </div>
         </div>

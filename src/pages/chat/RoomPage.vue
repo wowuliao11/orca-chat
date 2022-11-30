@@ -25,7 +25,7 @@
             Pull or click to view more histories.🔍
           </div>
 
-          <div class="col-8">
+          <div class="col-8 harmony-font-sans-medium">
             <!-- chat content -->
             <q-chat-message
               v-for="(r, index) in river"
