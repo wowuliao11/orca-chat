@@ -10,14 +10,7 @@
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
-        <q-btn
-          flat
-          dense
-          round
-          icon="home"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+        <q-btn flat dense round icon="home" to="/" />
 
         <q-toolbar-title> 🐳 💬</q-toolbar-title>
 
