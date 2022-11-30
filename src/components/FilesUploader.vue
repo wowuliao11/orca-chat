@@ -1,26 +1,24 @@
 <template>
-  <div class="q-pa-md">
-    <q-uploader
-      :factory="factory"
-      accept="image/*"
-      :label="props.label || 'Image Uploader🌞'"
-      multiple
-      auto-upload
-      @uploaded="onUploaded"
-      hide-upload-btn
-      :readonly="!!(props.maxFiles && images.length >= props.maxFiles)"
-    >
-      <template v-slot:list>
-        <q-list separator>
-          <PhotoSiwiper
-            galleryID="upload"
-            :images="images"
-            @file-delete="onFileDelete"
-          />
-        </q-list>
-      </template>
-    </q-uploader>
-  </div>
+  <q-uploader
+    :factory="factory"
+    accept="image/*"
+    :label="props.label || 'Image Uploader🌞'"
+    multiple
+    auto-upload
+    @uploaded="onUploaded"
+    hide-upload-btn
+    :readonly="!!(props.maxFiles && images.length >= props.maxFiles)"
+  >
+    <template v-slot:list>
+      <q-list separator>
+        <PhotoSiwiper
+          galleryID="upload"
+          :images="images"
+          @file-delete="onFileDelete"
+        />
+      </q-list>
+    </template>
+  </q-uploader>
 </template>
 
 <script setup lang="ts">

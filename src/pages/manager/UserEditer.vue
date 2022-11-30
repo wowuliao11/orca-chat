@@ -16,13 +16,11 @@
         </q-item-section>
 
         <q-item-section top>
-          <q-item-label lines="1">
-            <files-uploader
-              v-model="formData.avatar"
-              :images="[userInfo.avatar || globalConfig.defaultAvatarUrl]"
-              :maxFiles="1"
-            />
-          </q-item-label>
+          <files-uploader
+            v-model="formData.avatar"
+            :images="[userInfo.avatar || globalConfig.defaultAvatarUrl]"
+            :maxFiles="1"
+          />
         </q-item-section>
       </q-item>
 
