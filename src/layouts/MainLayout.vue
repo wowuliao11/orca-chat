@@ -52,7 +52,7 @@
               />
             </q-avatar>
           </q-btn>
-          <div class="text-weight-bolder text-h6 harmony-font-sans-medium">
+          <div class="text-weight-bolder text-h6 source-han-sans-cn-medium">
             {{ userInfo.nick }}
           </div>
           <div class="text-subtitle1 harmony-font-sans-medium">

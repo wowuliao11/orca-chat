@@ -19,6 +19,16 @@
   src: url(./fonts/HarmonyOS_Sans_Condensed_Light.ttf);
 }
 
+@font-face {
+  font-family: sourceHanSansCN-Medium;
+  src: url(./fonts/SourceHanSansCN-Medium.otf);
+}
+
+@font-face {
+  font-family: sourceHanSansCN-Regular;
+  src: url(./fonts/SourceHanSansCN-Regular.otf);
+}
+
 .harmony-font-sans-medium {
   font-family: 'harmonyFontSansMedium';
 }
@@ -29,4 +39,11 @@
 
 .harmony-font-sans-light {
   font-family: 'harmonyFontSansLight';
+}
+
+.source-han-sans-cn-medium {
+  font-family: 'sourceHanSansCN-Medium';
+}
+.source-han-sans-cn-regular {
+  font-family: 'sourceHanSansCN-Regular';
 }
