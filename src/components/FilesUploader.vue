@@ -8,6 +8,9 @@
     @uploaded="onUploaded"
     hide-upload-btn
     :readonly="!!(props.maxFiles && images.length >= props.maxFiles)"
+    :max-file-size="3072 * 1000"
+    @failed="onFailed"
+    @rejected="onRejected"
   >
     <template v-slot:list>
       <q-list separator>
@@ -22,9 +25,19 @@
 </template>
 
 <script setup lang="ts">
-import { LocalStorage, QUploaderFactoryObject } from 'quasar';
+import {
+  LocalStorage,
+  QList,
+  QRejectedEntry,
+  QUploader,
+  QUploaderFactoryFn,
+  QUploaderFactoryObject,
+  useQuasar,
+} from 'quasar';
 import PhotoSiwiper from 'src/components/UploaderPhotoSwiper.vue';
 import { ref, watch } from 'vue';
+
+const $q = useQuasar();
 
 const props = defineProps({ images: Array, label: String, maxFiles: Number });
 
@@ -34,7 +47,8 @@ const images = ref<any>([...(props.images || [])]);
 
 emit('update:modelValue', props.images);
 
-const factory = () => {
+const factory: QUploaderFactoryFn = (files) => {
+  console.log('type' + files[0].type);
   return new Promise<QUploaderFactoryObject>((resolve) => {
     // Retrieve JWT token from your store.
     resolve({
@@ -61,6 +75,26 @@ const onFileDelete = async (url: string) => {
   images.value.splice(eIndex, 1);
 };
 
+const onFailed = (info: { files: readonly any[]; xhr: any }) => {
+  const response = JSON.parse(info.xhr?.response || '');
+
+  $q.notify({
+    type: 'negative',
+    message:
+      'Failed reason:' +
+      (response?.payload?.errMsg || 'Unknow reason for this failed'),
+  });
+};
+
+const onRejected = (rejectedEntries: QRejectedEntry[]) => {
+  $q.notify({
+    type: 'negative',
+    message:
+      'Failed reason:' +
+        rejectedEntries.map((r) => r.failedPropValidation).join(',') ||
+      'Unknow reason for this failed',
+  });
+};
 watch(images.value, (value) => {
   emit('update:modelValue', value);
 });
