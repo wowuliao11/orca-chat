@@ -9,7 +9,7 @@ COPY . .
 
 RUN yarn config set registry "https://registry.npmjs.org/"
 
-RUN yarn global add @quasar/cli
+RUN yarn global add @quasar/cli --network-timeout 100000
 
 COPY .env.production .env
 
@@ -18,7 +18,7 @@ FROM development as build-stage
 
 RUN yarn config set registry "https://registry.npmjs.org/"
 
-RUN yarn
+RUN yarn --network-timeout 100000
 
 RUN quasar build
 
