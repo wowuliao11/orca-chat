@@ -1,22 +1,22 @@
 # develop stage
-FROM node:16.18.1-alpine as development
+FROM node:lts-alpine as development
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN yarn set version latest
+COPY . .
+
+RUN yarn config set registry "https://registry.npmjs.org/"
 
 RUN yarn global add @quasar/cli
-
-COPY . .
 
 COPY .env.production .env
 
 # build stage
 FROM development as build-stage
 
-RUN yarn set version latest
+RUN yarn config set registry "https://registry.npmjs.org/"
 
 RUN yarn
 
