@@ -5,6 +5,8 @@ WORKDIR /app
 
 COPY package*.json ./
 
+RUN yarn set version latest
+
 RUN yarn global add @quasar/cli
 
 COPY . .
@@ -13,6 +15,8 @@ COPY .env.production .env
 
 # build stage
 FROM development as build-stage
+
+RUN yarn set version latest
 
 RUN yarn
 
