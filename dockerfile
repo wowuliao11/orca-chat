@@ -16,7 +16,7 @@ COPY .env.production .env
 # build stage
 FROM development as build-stage
 
-RUN yarn config set registry "https://registry.npmjs.org/"
+RUN yarn cache clean
 
 RUN yarn --network-timeout 100000
 
