@@ -7,7 +7,7 @@ COPY package*.json ./
 
 COPY . .
 
-RUN yarn config set registry "https://registry.npmjs.org/"
+RUN yarn cache clean
 
 RUN yarn global add @quasar/cli --network-timeout 100000
 
