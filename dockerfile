@@ -9,7 +9,7 @@ COPY . .
 
 RUN yarn cache clean
 
-RUN yarn global add @quasar/cli --network-timeout 100000
+RUN yarn global add @quasar/cli --network-timeout 1000000
 
 COPY .env.production .env
 
@@ -18,7 +18,7 @@ FROM development as build-stage
 
 RUN yarn cache clean
 
-RUN yarn --network-timeout 100000
+RUN yarn --network-timeout 1000000
 
 RUN quasar build
 
